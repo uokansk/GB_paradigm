@@ -28,7 +28,7 @@ def sort_list_declarative(numbers):
 
 
 if __name__ == '__main__':
-    amount_numbers = 10
+    amount_numbers = 20
     beginning_list = -99
     end_list = 99
     solution = build_list(amount_numbers, beginning_list, end_list)
