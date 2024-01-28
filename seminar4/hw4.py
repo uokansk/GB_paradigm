@@ -35,7 +35,7 @@ def correlation(dat1, dat2):
 
 
 data2 = build_list(10, 1, 100)
-data1 = build_list(10, 1, 10)
+data1 = build_list(20, 1, 10)
 
 print(data1)
 print(data2)
