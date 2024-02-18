@@ -5,11 +5,8 @@ def nothing(x):
     pass
 
 
-# Получаем изображение с камеры
 cap = cv.VideoCapture(0)
-# создаем окно
 cv.namedWindow('result')
-# создаем ползунки для минимальных и максимальных значений цветов
 cv.createTrackbar('minB', 'result', 0, 255, nothing)
 cv.createTrackbar('minG', 'result', 0, 255, nothing)
 cv.createTrackbar('minR', 'result', 0, 255, nothing)
@@ -17,28 +14,37 @@ cv.createTrackbar('maxB', 'result', 0, 255, nothing)
 cv.createTrackbar('maxG', 'result', 0, 255, nothing)
 cv.createTrackbar('maxR', 'result', 0, 255, nothing)
 
-cap = cv.VideoCapture(0)
+signal = cv.imread('signals/slipperyRoad.jpg')
+
 
 while True:
-    ret, frame = cap.read()
-    cv.imshow('frame', frame)
-    # сохраняем текущее положение ползунка
+
+    # переводим формат изображения из BGR в HSV
+    hsv = cv.cvtColor(signal, cv.COLOR_BGR2HSV)
+    cv.imshow('hsv', hsv)
+
     minB = cv.getTrackbarPos('minB', 'result')
     minG = cv.getTrackbarPos('minG', 'result')
     minR = cv.getTrackbarPos('minR', 'result')
     maxB = cv.getTrackbarPos('maxB', 'result')
     maxG = cv.getTrackbarPos('maxG', 'result')
     maxR = cv.getTrackbarPos('maxR', 'result')
+    # применяем размытие
+    hsv = cv.blur(hsv, (5, 5))
+    cv.imshow('blur', hsv)
+
     # бинаризованную картинку сохраняем в переменную и выводим на экран
-    # mask = cv.inRange(frame, (minB, minG, minR), (maxB, maxG, maxR))
-    # cv.imshow('mask', mask)
-    mask2 = cv.inRange(frame, (minB, minG, minR), (maxB, maxG, maxR))
-    cv.imshow('mask2', mask2)
-    cv.imshow('signal', frame)
-    # result = cv.bitwise_and(frame, frame, mask=mask)
-    # cv.imshow('result', result)
-    # result2 = cv.bitwise_and(signal, signal, mask=mask2)
-    # cv.imshow('result2', result2)
+    mask = cv.inRange(hsv, (minB, minG, minR), (maxB, maxG, maxR))
+    cv.imshow('mask', mask)
+
+    maskEr = cv.erode(mask, (5, 5), iterations=2)
+    cv.imshow('erode', maskEr)
+
+    maskDi = cv.dilate(maskEr, None, iterations=2)
+    cv.imshow('dilate', maskDi)
+
+    result = cv.bitwise_and(signal, signal, mask=mask)
+    cv.imshow('result', result)
 
     if cv.waitKey(1) == ord('q'):
         break
